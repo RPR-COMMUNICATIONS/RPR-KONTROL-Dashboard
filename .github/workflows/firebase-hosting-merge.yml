@@ -24,10 +24,11 @@ jobs:
           cache: 'npm'
 
       - name: "🛠️ Install Dependencies"
+        # Using 'ci' ensures the exact versions from package-lock.json (v13.0.0 toolset)
         run: npm ci
 
       - name: "🏗️ Build Kontrol Dashboard"
-        # Authority: PRD v1.2.3 / Alignment: dist-kontrol output
+        # Authority: PRD v1.2.3 / Logic: Directing output to dist-kontrol
         run: BUILD_OUTPUT_DIR=dist-kontrol npm run build
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -36,15 +37,15 @@ jobs:
         id: auth
         uses: google-github-actions/auth@v2
         with:
-          # Authoritative GCP State: projects/796960601918 (rpr-myaudit)
+          # Authoritative GCP Resource Path
           workload_identity_provider: 'projects/796960601918/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider'
           service_account: 'github-deploy-rpr-myaudit@rpr-myaudit.iam.gserviceaccount.com'
           create_credentials_file: true
           export_environment_variables: true
 
       - name: "🚀 Deploy to Firebase (Target: kontrol)"
-        # Keyless deployment using the OIDC-negotiated credentials file
-        run: npx firebase-tools deploy --only hosting:kontrol --non-interactive --project rpr-myaudit
+        # We call the local binary directly to resolve the "Position 1" JSON parse errors
+        run: ./node_modules/.bin/firebase deploy --only hosting:kontrol --non-interactive --project rpr-myaudit
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
           GOOGLE_CLOUD_PROJECT: rpr-myaudit
