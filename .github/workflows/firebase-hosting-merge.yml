@@ -25,11 +25,17 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       
-      - name: Deploy to Firebase Hosting (kontrol)
-        uses: FirebaseExtended/action-hosting-deploy@v0
+      - name: "🔐 Authenticate to Google Cloud (WIF)"
+        id: auth
+        uses: google-github-actions/auth@v2
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_RPR_MYAUDIT }}'
-          channelId: live
-          projectId: rpr-myaudit
-          target: kontrol
+          workload_identity_provider: 'projects/796960601918/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider'
+          service_account: 'github-deploy-rpr-myaudit@rpr-myaudit.iam.gserviceaccount.com'
+          create_credentials_file: true
+          export_environment_variables: true
+
+      - name: "🚀 Deploy to Firebase (Target: kontrol)"
+        run: npx firebase-tools deploy --only hosting:kontrol --non-interactive --project rpr-myaudit
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
+          GOOGLE_CLOUD_PROJECT: rpr-myaudit
