@@ -1,4 +1,4 @@
-name: Deploy to Firebase Hosting on merge
+name: Deploy RPR-KONTROL Dashboard (WIF)
 
 on:
   push:
@@ -6,37 +6,45 @@ on:
       - main
 
 jobs:
-  build_and_deploy:
+  deploy_kontrol:
+    name: "🛡️ WIF Sovereign Deployment (Kontrol)"
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - name: "🛰️ Checkout Substrate"
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: "📦 Setup Node.js (LTS 20)"
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install dependencies
+      - name: "🛠️ Install Dependencies"
         run: npm ci
 
-      - name: Build kontrol
+      - name: "🏗️ Build Kontrol Dashboard"
+        # Authority: PRD v1.2.3 / Alignment: dist-kontrol output
         run: BUILD_OUTPUT_DIR=dist-kontrol npm run build
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
-      - name: Authenticate to Google Cloud (WIF)
+      - name: "🔐 Authenticate to Google Cloud (WIF)"
         id: auth
         uses: google-github-actions/auth@v2
         with:
+          # Authoritative GCP State: projects/796960601918 (rpr-myaudit)
           workload_identity_provider: 'projects/796960601918/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider'
           service_account: 'github-deploy-rpr-myaudit@rpr-myaudit.iam.gserviceaccount.com'
           create_credentials_file: true
           export_environment_variables: true
 
-      - name: Deploy to Firebase Hosting (kontrol)
-        run: npx firebase-tools deploy --only hosting:kontrol --non-interactive
+      - name: "🚀 Deploy to Firebase (Target: kontrol)"
+        # Keyless deployment using the OIDC-negotiated credentials file
+        run: npx firebase-tools deploy --only hosting:kontrol --non-interactive --project rpr-myaudit
         env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
           GOOGLE_CLOUD_PROJECT: rpr-myaudit
