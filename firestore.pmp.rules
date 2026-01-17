@@ -1,0 +1,92 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. SPECIFIC-FIRST: RPR-KONTROL Governance Namespace (Auditors Only)
+    match /governance/{document=**} {
+      allow read, write: if request.auth != null
+        && request.auth.token.role == 'auditor';
+    }
+
+    // 2. SPECIFIC: PMP Governance Sessions (Immutable - Write Once)
+    match /governance_sessions/{sessionId} {
+      // Immutable: Only allow create, no updates or deletes
+      allow create: if request.auth != null
+        && request.auth.token.role == 'auditor'
+        && isValidGovernanceSession();
+      allow read: if request.auth != null
+        && request.auth.token.role == 'auditor';
+      allow update, delete: if false; // Immutable enforcement
+    }
+
+    // 3. SPECIFIC: Agent Logs (Metadata Validation Required)
+    match /agent_logs/{logId} {
+      allow read: if request.auth != null
+        && request.auth.token.role == 'auditor';
+      allow write: if request.auth != null
+        && request.auth.token.role == 'auditor'
+        && isValidAgentLog();
+    }
+
+    // 4. SPECIFIC: System Inventory (Read-Only)
+    match /system_inventory/{inventoryId} {
+      allow read: if request.auth != null
+        && request.auth.token.role == 'auditor';
+      allow write: if false; // Read-only enforcement
+    }
+
+    // 5. SPECIFIC: Entity Root Documents
+    match /entities/{entityId} {
+      allow read, write: if request.auth != null
+        && (request.auth.uid == resource.data.ownerId 
+            || (resource == null && request.resource.data.ownerId == request.auth.uid));
+    }
+
+    // 6. SPECIFIC: Entity Subcollections
+    match /entities/{entityId}/{document=**} {
+      allow read, write: if request.auth != null
+        && request.auth.uid == get(/databases/$(database)/documents/entities/$(entityId)).data.ownerId;
+    }
+
+    // 7. SPECIFIC: Transactions Collection
+    match /transactions/{transactionId} {
+      allow read, delete: if request.auth != null;
+      allow write: if request.auth != null && isValidTransaction();
+    }
+
+    // 8. GLOBAL DENY: Everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+
+  function isValidGovernanceSession() {
+    let session = request.resource.data;
+    return session.sessionId is string
+      && session.timestamp is string
+      && session.projectCode is string
+      && session.classification is string;
+  }
+
+  function isValidAgentLog() {
+    let log = request.resource.data;
+    return log.agent_name is string
+      && log.prompt_id is string
+      && log.timestamp is string
+      && log.metadata is map;
+  }
+
+  function isValidTransaction() {
+    let transaction = request.resource.data;
+    let isStructurallySound = transaction.description is string &&
+                              transaction.debit is number &&
+                              transaction.credit is number &&
+                              transaction.date is string &&
+                              transaction.category is string &&
+                              transaction.status is string;
+    let isWelfareCompliant = !(transaction.category == 'Staff Welfare' &&
+                               transaction.debit > 5000 &&
+                               transaction.status == 'AUDIT_READY');
+    return isStructurallySound && isWelfareCompliant;
+  }
+}

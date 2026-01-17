@@ -1,0 +1,18 @@
+{
+  "projects": {
+    "default": "rpr-myaudit"
+  },
+  "targets": {
+    "rpr-myaudit": {
+      "hosting": {
+        "primary": [
+          "rpr-myaudit"
+        ],
+        "kontrol": [
+          "myaudit-kontrol-dashboard"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

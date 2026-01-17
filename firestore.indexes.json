@@ -1,0 +1,31 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "governance",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "projectCode", "order": "ASCENDING" },
+        { "fieldPath": "timestamp", "order": "DESCENDING" },
+        { "fieldPath": "classification", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "governance",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "humanOperator", "order": "ASCENDING" },
+        { "fieldPath": "timestamp", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "governance",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "dual_state.validation_posture", "order": "ASCENDING" },
+        { "fieldPath": "dual_state.defense_readiness", "order": "ASCENDING" },
+        { "fieldPath": "timestamp", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
