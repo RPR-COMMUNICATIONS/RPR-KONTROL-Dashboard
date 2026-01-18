@@ -24,7 +24,7 @@ fi
 # --- LAYER 2: CONFIGURATION ALIGNMENT ---
 echo "🔍 Verifying Kontrol Configuration Substrates..."
 
-FILES=(".firebaserc" "firebase.json" "package.json" ".github/workflows/firebase-hosting-merge.yml")
+FILES=(".firebaserc" "firebase.json" "package.json" ".github/workflows/guardian-saas.yml")
 for FILE in "${FILES[@]}"; do
   if [ -f "$FILE" ]; then
     echo "✅ Presence: $FILE"

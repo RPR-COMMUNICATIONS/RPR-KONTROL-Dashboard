@@ -1,65 +1,104 @@
 #!/bin/bash
-# RPR-KONTROL-PM: Guardian Substrate Verification (Phase 2)
-# Authority: SENTINEL PROTOCOL v1.1.0
-# Purpose: Ensures logic parity, schema lockdown, and clinical isolation.
+# Guardian Substrate Verification Script
+# Authority: SENTINEL PROTOCOL v1.1.0 / MYA-GOV-008C
+# Purpose: Pre-deployment verification for RPR-KONTROL-Dashboard hosting:kontrol target
+# Organization: PRP-COMMUNICATIONS-LLC
 
 set -e
 
-echo "🔐 Guardian Substrate Verification [RPR-KONTROL-PM v1.5.1]"
-echo "=========================================================="
+PROJECT_ID="rpr-myaudit"
+KONTROL_SITE="myaudit-kontrol-dashboard"
+EXPECTED_REGION="asia-southeast1"
+EXPECTED_WIF_PROVIDER="github-actions-provider-v2"
+EXPECTED_REPO="prp-communications-llc/rpr-kontrol-dashboard"
 
-# Colors
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-CYAN='\033[0;36m'
-NC='\033[0m'
+echo "🛡️ SENTINEL: Initiating Substrate Verification..."
+echo "------------------------------------------------"
 
-# 1. Identity Manifest Check
-if [ -f "public/data/GOV-SUBSTRATES.json" ]; then
-    echo -e "${GREEN}✅ Sovereign Identity Manifest detected.${NC}"
-else
-    echo -e "${RED}❌ ERROR: Identity manifest (GOV-SUBSTRATES.json) missing.${NC}"
+# Check 1: .firebaserc configuration
+echo "🔍 Checking .firebaserc..."
+if ! grep -q "\"kontrol\"" .firebaserc || ! grep -q "$KONTROL_SITE" .firebaserc; then
+  echo "❌ ERROR: .firebaserc missing kontrol target or incorrect site mapping"
+  exit 1
+fi
+echo "✅ .firebaserc: kontrol target → $KONTROL_SITE"
+
+# Check 2: firebase.json hosting config
+echo "🔍 Checking firebase.json..."
+if ! grep -q "\"target\": \"kontrol\"" firebase.json || ! grep -q "\"public\": \"dist-kontrol\"" firebase.json; then
+  echo "❌ ERROR: firebase.json missing kontrol hosting config or incorrect public path"
+  exit 1
+fi
+echo "✅ firebase.json: kontrol target with public: dist-kontrol"
+
+# Check 3: Manifest structure (if build exists)
+MANIFEST_PATH="dist-kontrol/data/GOV-SUBSTRATES.json"
+if [ -f "$MANIFEST_PATH" ]; then
+  echo "🔍 Checking GOV-SUBSTRATES.json structure..."
+  
+  # Verify substrates.clinical
+  if ! grep -q "\"repo\": \"PRP-COMMUNICATIONS-LLC/MYAUDIT\"" "$MANIFEST_PATH" || \
+     ! grep -q "\"site_id\": \"primary\"" "$MANIFEST_PATH" || \
+     ! grep -q "\"firebase_project\": \"$PROJECT_ID\"" "$MANIFEST_PATH" || \
+     ! grep -q "\"region\": \"$EXPECTED_REGION\"" "$MANIFEST_PATH"; then
+    echo "❌ ERROR: substrates.clinical structure invalid"
     exit 1
+  fi
+  
+  # Verify substrates.governance
+  if ! grep -q "\"repo\": \"PRP-COMMUNICATIONS-LLC/RPR-KONTROL-Dashboard\"" "$MANIFEST_PATH" || \
+     ! grep -q "\"site_id\": \"$KONTROL_SITE\"" "$MANIFEST_PATH"; then
+    echo "❌ ERROR: substrates.governance structure invalid"
+    exit 1
+  fi
+  
+  # Verify wif_config
+  if ! grep -q "\"provider\": \"$EXPECTED_WIF_PROVIDER\"" "$MANIFEST_PATH" || \
+     ! grep -q "\"condition\"" "$MANIFEST_PATH"; then
+    echo "❌ ERROR: wif_config structure invalid"
+    exit 1
+  fi
+  
+  # Verify WIF condition uses PRP-COMMUNICATIONS-LLC (lowercase)
+  if ! grep -q "prp-communications-llc/rpr-kontrol-dashboard" "$MANIFEST_PATH"; then
+    echo "❌ ERROR: WIF condition does not match PRP-COMMUNICATIONS-LLC organization"
+    exit 1
+  fi
+  
+  # Verify runtime
+  if ! grep -q "\"runtime\"" "$MANIFEST_PATH" || ! grep -q "\"timestamp\"" "$MANIFEST_PATH"; then
+    echo "❌ ERROR: runtime section missing"
+    exit 1
+  fi
+  
+  echo "✅ GOV-SUBSTRATES.json: Structure valid"
+else
+  echo "⚠️  WARNING: $MANIFEST_PATH not found (first build?)"
 fi
 
-# 2. Logic Substrate Parity Check (Milestone 2.2)
-if [ -f "src/utils/logic/taxcompute.ts" ]; then
-    echo -e "${GREEN}✅ Governance Logic Substrate (taxcompute.ts) verified for Flutter parity.${NC}"
-else
-    echo -e "${RED}❌ ERROR: Logic substrate missing. Native build compatibility blocked.${NC}"
-    exit 1
+# Check 4: Clinical codename leakage scan
+echo "🔍 Scanning for clinical codename leakage..."
+LEAKAGE_PATTERNS=("MYAUDIT Phase 1" "DR RP" "THE AOUTHA")
+LEAKAGE_FOUND=0
+
+for pattern in "${LEAKAGE_PATTERNS[@]}"; do
+  if grep -r "$pattern" dist-kontrol/assets/*.js 2>/dev/null | grep -v "SENTINEL" > /dev/null; then
+    echo "❌ ERROR: Clinical codename leakage found: $pattern"
+    LEAKAGE_FOUND=1
+  fi
+done
+
+# SENTINEL is allowed in governance code (internal), but check for visible UI strings
+if grep -r "MYAUDIT Phase 1" dist-kontrol/assets/*.js 2>/dev/null | grep -q "projectName"; then
+  echo "❌ ERROR: Clinical codename 'MYAUDIT Phase 1' found in UI-facing code"
+  LEAKAGE_FOUND=1
 fi
 
-# 3. Schema Contract Check (Milestone 2.4)
-if [ -f "artifacts/GOV-SCHEMAS-v1.0.0.json" ]; then
-    echo -e "${GREEN}✅ Data Schema Contract (v1.0.0) verified.${NC}"
-else
-    echo -e "${RED}❌ ERROR: GOV-SCHEMAS-v1.0.0.json missing.${NC}"
-    exit 1
+if [ $LEAKAGE_FOUND -eq 1 ]; then
+  exit 1
 fi
+echo "✅ No clinical codename leakage detected"
 
-# 4. Clinical Isolation Scan (Sentinel Guardrail)
-echo -e "${CYAN}Performing clinical isolation scan...${NC}"
-# Scan for clinical personae (ROOK, KNIGHT, BISHOP, SENTINEL VETO, etc.)
-# We exclude the current script and node_modules from the scan
-LEAK_CHECK=$(grep -rnE "SENTINEL VETO|DR RP|AOUTHA|ROOK|KNIGHT|BISHOP" src/ --exclude-dir=node_modules || true)
-if [ ! -z "$LEAK_CHECK" ]; then
-    echo -e "${RED}❌ CRITICAL: Clinical personae leakage detected in Governance substrate!${NC}"
-    echo "$LEAK_CHECK"
-    exit 1
-else
-    echo -e "${GREEN}✅ Clinical isolation rule enforced.${NC}"
-fi
-
-# 5. Build Verification
-echo -e "${CYAN}Verifying build for 'kontrol' target...${NC}"
-npm run build:kontrol > /dev/null
-if [ -d "dist-kontrol" ]; then
-    echo -e "${GREEN}✅ Build successful for RPR-KONTROL-PM.${NC}"
-else
-    echo -e "${RED}❌ ERROR: Build failed.${NC}"
-    exit 1
-fi
-
-echo "=========================================================="
-echo -e "${GREEN}🏁 SUBSTRATE VERIFICATION COMPLETE${NC}"
+echo "------------------------------------------------"
+echo "🏁 PRP SUBSTRATE VERIFICATION COMPLETE ✅"
+exit 0

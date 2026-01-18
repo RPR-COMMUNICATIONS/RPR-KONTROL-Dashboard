@@ -1,3 +1,120 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "tailwindcss";
+
+/**
+ * RPR-BRAND-KIT-V2: Sovereign UI Theme
+ * Authority: STITCH (Design Engineer)
+ * Status: HARDENED
+ */
+
+@theme {
+  --color-brand-cyan: #22d3ee;
+  --color-brand-charcoal: #020617;
+  --color-brand-slate: #0f172a;
+  --color-brand-amber: #fbbf24;
+  
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "Fira Code", monospace;
+
+  --radius-squircle: 2rem;
+  --radius-panel: 3rem;
+}
+
+/* --- Global Substrate Styles --- */
+@layer base {
+  body {
+    @apply bg-slate-950 text-slate-200 antialiased font-sans;
+  }
+}
+
+@layer components {
+  .card-style {
+    @apply bg-slate-900 border border-slate-800 rounded-[var(--radius-squircle)] shadow-2xl transition-all hover:border-cyan-500/20;
+  }
+
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.slate.800') transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: theme('colors.slate.800');
+    border-radius: 10px;
+  }
+
+  /* Input and Select field styles */
+  .input-style {
+    @apply bg-slate-800 border border-slate-800 text-slate-200 px-3 py-2 rounded-md w-full focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500;
+  }
+
+  .input-style::placeholder {
+    @apply text-slate-500;
+  }
+
+  /* Markdown styling */
+  .prose {
+    @apply text-slate-200;
+  }
+
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4,
+  .prose h5,
+  .prose h6 {
+    @apply text-slate-200;
+  }
+
+  .prose a {
+    @apply text-cyan-500;
+  }
+
+  .prose code {
+    @apply bg-slate-800 text-cyan-500;
+  }
+
+  .prose table {
+    @apply text-slate-200 border-slate-800;
+  }
+
+  .prose th,
+  .prose td {
+    @apply border-slate-800;
+  }
+
+  /* Layout Utility: Section Prefix */
+  .section-prefix::before {
+    content: '//';
+    @apply text-cyan-500 mr-3 font-extrabold;
+  }
+}
+
+/* --- Forensic Animations --- */
+@keyframes pulse-cyan {
+  0%, 100% { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+  50% { 
+    opacity: 0.5; 
+    transform: scale(0.95); 
+  }
+}
+
+.animate-forensic-pulse {
+  animation: pulse-cyan 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.pulse-glow-cyan {
+  animation: pulse-cyan 2s infinite ease-in-out;
+}

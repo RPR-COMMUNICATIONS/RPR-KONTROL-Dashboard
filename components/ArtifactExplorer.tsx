@@ -23,7 +23,7 @@ const ArtifactExplorer: React.FC<ArtifactExplorerProps> = ({ artifacts, projectS
     // Determine virtual folder based on artifact type or drivePath
     let folderName = 'Uncategorized';
     if (artifact.drivePath) {
-      // Extract the last folder name from drivePath, e.g., "specs" from "RPR-KONTROL-DOCUMENTS/MYAUDIT/specs/"
+      // Extract the last folder name from drivePath, e.g., "specs" from "RPR-KONTROL-DOCUMENTS/ProjectName/specs/"
       const pathParts = artifact.drivePath.split('/').filter(Boolean);
       folderName = pathParts[pathParts.length - 1] || 'Drive Root';
     } else {
@@ -168,16 +168,21 @@ const ArtifactExplorer: React.FC<ArtifactExplorerProps> = ({ artifacts, projectS
             </select>
           </div>
           <div className="md:col-span-2">
-            <label htmlFor="artifactDrivePath" className="block text-rpr-white text-sm font-bold mb-2">Drive Path (e.g., RPR-KONTROL-DOCUMENTS/MYAUDIT/specs/)</label>
+            <label htmlFor="artifactDrivePath" className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">
+              Sovereign Drive Path
+            </label>
             <input
               type="text"
               id="artifactDrivePath"
               className="input-style"
               value={newArtifactDrivePath}
               onChange={(e) => setNewArtifactDrivePath(e.target.value)}
-              placeholder="RPR-KONTROL-DOCUMENTS/PROJECT_NAME/folder/"
+              placeholder="e.g., RPR-KONTROL-DOCUMENTS/ProjectName/specs/"
               disabled={!currentSession}
             />
+            <p className="text-[10px] text-slate-600 mt-1 italic">
+              Format: Root/Namespace/Directory/
+            </p>
           </div>
         </div>
         <div className="text-center mt-6">
