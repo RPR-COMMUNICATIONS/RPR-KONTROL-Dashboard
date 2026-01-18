@@ -1,0 +1,32 @@
+{
+  "project": "RPR-KONTROL-PM",
+  "version": "1.0.0",
+  "authority": "SENTINEL PROTOCOL v1.1.0",
+  "purpose": "Authoritative schemas for governance_sessions and telemetry parity with Flutter clients.",
+  "schemas": {
+    "governance_sessions": {
+      "type": "object",
+      "required": ["timestamp", "event", "actor_identity", "verification_status"],
+      "properties": {
+        "timestamp": { "type": "string", "format": "date-time" },
+        "event": { "type": "string", "enum": ["SUBSTRATE_DEPLOY_V2", "WIF_OIDC_HANDSHAKE", "MANIFEST_GEN", "LOGIC_PARITY_SYNC", "VAULT_ACCESS"] },
+        "actor_identity": { "type": "string" },
+        "commit_hash": { "type": "string" },
+        "verification_status": { "type": "string", "enum": ["SUCCESS", "FAILURE", "PENDING", "VERIFIED"] },
+        "metadata": { "type": "object" }
+      }
+    },
+    "tax_audit_telemetry": {
+      "type": "object",
+      "required": ["scenario_id", "risk_weight", "is_anomalous"],
+      "properties": {
+        "scenario_id": { "type": "string" },
+        "is_anomalous": { "type": "boolean" },
+        "risk_weight": { "type": "number", "minimum": 0, "maximum": 100 },
+        "anomaly_flags": { "type": "array", "items": { "type": "string" } },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "protocol_version": { "type": "string", "default": "SENTINEL-v1.1.0" }
+      }
+    }
+  }
+}
