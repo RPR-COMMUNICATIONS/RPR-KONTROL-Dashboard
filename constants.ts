@@ -10,9 +10,9 @@ export const AGENTS_TRACKED: AgentType[] = [
 ];
 
 export const INITIAL_CONTEXT = {
-  projectName: 'MYAUDIT Phase 1',
+  projectName: 'RPR-KONTROL Governance',
   phase: Phase.PLANNING,
-  objective: 'Review and define the initial architecture for MYAUDIT Phase 1, focusing on backend integration and UI mockups.',
+  objective: 'Review and define the initial architecture for RPR-KONTROL Governance, focusing on backend integration and UI mockups.',
 };
 
 export const INITIAL_CLASSIFICATION = Classification.TS_LAMBDA_3;
@@ -61,7 +61,7 @@ export const MOCK_AGENT_PERFORMANCE = {
 export const MOCK_ARTIFACTS = [
   {
     type: ArtifactType.PRD,
-    title: "MYAUDIT Phase 1 Specification",
+    title: "RPR-KONTROL Governance Specification",
     version: "v1.2.5",
     filePath: "docs/PRDs/MYAUDIT_Phase1_v1.2.5.pdf",
     driveFileId: "1P_2B-C4D5E6F7G8H9I0J1K2L3M4N5O6" // Example Drive ID
