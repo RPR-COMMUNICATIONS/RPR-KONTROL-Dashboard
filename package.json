@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:kontrol": "BUILD_OUTPUT_DIR=dist-kontrol vite build",
+    "build:kontrol": "BUILD_OUTPUT_DIR=dist-kontrol vite build && echo '{\"provider\": \"github-actions-provider-v2\", \"identity\": \"myaudit-kontrol-ci\", \"timestamp\": \"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'\"}' > dist-kontrol/GOV-SUBSTRATES.json",
     "preview": "vite preview",
     "deploy:kontrol": "npm run build:kontrol && firebase deploy --only hosting:kontrol"
   },
