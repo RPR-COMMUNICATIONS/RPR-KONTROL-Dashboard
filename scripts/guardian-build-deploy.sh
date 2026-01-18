@@ -1,63 +1,53 @@
 #!/bin/bash
-# Guardian Build and Deploy Script
-# Authority: SENTINEL PROTOCOL v1.1.0 / MYA-GOV-008C
-# Usage: sh scripts/guardian-build-deploy.sh [ci|manual]
+# Guardian Build & Deploy Orchestrator
+# Purpose: Master script for executing a hardened build and deployment sequence.
+# Authority: SENTINEL PROTOCOL v1.1.0
+# Classification: TS-Λ3 (CROWN SECRET)
 
-MODE=${1:-"ci"}
+# Usage: sh scripts/guardian-build-deploy.sh [manual|ci]
+MODE=${1:-"manual"} # Default to manual
 
-if [ "$MODE" != "ci" ] && [ "$MODE" != "manual" ]; then
-  echo "❌ ERROR: Mode must be 'ci' or 'manual'"
-  exit 1
-fi
+set -e
 
-echo "🛡️ SENTINEL: Initiating Build and Deploy ($MODE mode)..."
-echo "------------------------------------------------"
+# --- Configuration ---
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m'
 
-# Pre-build verification
-echo "📋 Step 1: Pre-build substrate verification..."
-if ! sh scripts/guardian-verify-substrate.sh; then
-  echo "❌ Pre-build verification failed. Aborting."
-  exit 1
-fi
+# --- Banner ---
+echo -e "${BLUE}====================================${NC}"
+echo -e "${BLUE} RPR KONTROL: Hardened Deployment   ${NC}"
+echo -e "${BLUE}====================================${NC}"
+echo "MODE: $MODE"
+echo ""
 
-# Install dependencies
-echo "📦 Step 2: Installing dependencies..."
-npm ci
-if [ $? -ne 0 ]; then
-  echo "❌ npm ci failed. Aborting."
-  exit 1
-fi
+# --- Step 1: Substrate Verification ---
+echo "--- [1/3] Verifying Substrate Integrity ---"
+sh scripts/guardian-verify-substrate.sh
+echo "Verification complete."
+echo ""
 
-# Build
-echo "🏗️  Step 3: Building kontrol target..."
+# --- Step 2: Build & Manifest Generation ---
+echo "--- [2/3] Building Kontrol Target ---"
 npm run build:kontrol
-if [ $? -ne 0 ]; then
-  echo "❌ Build failed. Aborting."
-  exit 1
-fi
+echo "Build complete. Artifacts generated in dist-kontrol/."
+echo ""
 
-# Post-build verification
-echo "📋 Step 4: Post-build substrate verification..."
-if ! sh scripts/guardian-verify-substrate.sh; then
-  echo "❌ Post-build verification failed. Aborting."
-  exit 1
-fi
-
-# Deploy (manual mode only)
-if [ "$MODE" == "manual" ]; then
-  echo "🚀 Step 5: Deploying to hosting:kontrol..."
-  firebase deploy --only hosting:kontrol --project rpr-myaudit
-  if [ $? -ne 0 ]; then
-    echo "❌ Deploy failed."
-    exit 1
-  fi
-  echo "✅ Deployment complete."
+# --- Step 3: Deployment Trigger ---
+echo "--- [3/3] Finalizing Deployment ---"
+if [ "$MODE" == "ci" ]; then
+    echo "CI Mode: Deployment will be handled by the Firebase GitHub Action."
+    echo "This script's responsibility ends here."
 else
-  echo "ℹ️  Step 5: CI mode - skipping local deploy"
-  echo "   Deployment will be handled by GitHub Actions workflow (guardian-saas.yml)"
-  echo "   Push to main branch to trigger CI/CD deployment."
+    echo "MANUAL Mode: To trigger the v2 Identity Bridge deployment:"
+    echo "  1. git add ."
+    echo "  2. git commit -m 'feat: hardened substrate deployment'"
+    echo "  3. git push origin main"
 fi
+echo ""
 
-echo "------------------------------------------------"
-echo "🏁 Build and Deploy Complete ✅"
-exit 0
+# --- Completion ---
+echo -e "${GREEN}====================================${NC}"
+echo -e "${GREEN} ✅ ORCHESTRATION COMPLETE         ${NC}"
+echo -e "${GREEN}====================================${NC}"

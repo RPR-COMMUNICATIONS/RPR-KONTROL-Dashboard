@@ -28,29 +28,20 @@ jobs:
 
       - name: "🏗️ Build Kontrol"
         env:
-          # Build-time environment variables for clinical reasoning and substrate identification
           VITE_FIREBASE_PROJECT_ID: rpr-myaudit
-          VITE_FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
-          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
-          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
-          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
-          VITE_FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
-          VITE_GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: npm run build:kontrol
 
       - name: "🔐 Authenticate via WIF"
         id: auth
         uses: google-github-actions/auth@v2
         with:
-          # PILLAR: Using the verified v2 provider to bypass "Ghost" states
           workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
           service_account: ${{ secrets.GCP_WIF_SERVICE_ACCOUNT }}
-          token_format: 'access_token'   # <<< Token Bridge Pattern
+          token_format: 'access_token'   # <<< Token Bridge
 
       - name: "🚀 Firebase Deploy (Direct CLI)"
         env:
-          # Explicit token injection unblocks the CLI in restricted IAM environments
-          FIREBASE_TOKEN: ${{ steps.auth.outputs.access_token }}
+          FIREBASE_TOKEN: ${{ steps.auth.outputs.access_token }}   # <<< Token Bridge
         run: |
           npx firebase-tools deploy \
             --only hosting:kontrol \

@@ -34,9 +34,8 @@ const ConversationHistory: React.FC<ConversationHistoryProps> = ({ conversation 
                 {turn.agent === AgentType.HUMAN ? 'Human Operator' : turn.agent.charAt(0).toUpperCase() + turn.agent.slice(1)}
               </div>
               {turn.vetoed && (
-                <div className="text-red-200 font-bold text-xs mb-2 p-1 bg-red-800/40 border border-red-700/50 rounded flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
-                  GOVERNANCE VETO: Prohibited Content Detected
+                <div className="text-red-200 font-bold text-xs mb-2 p-1 bg-red-800 rounded">
+                  // SENTINEL VETO: Prohibited Content Detected
                 </div>
               )}
               <p className="whitespace-pre-wrap">{turn.content}</p>
