@@ -3,6 +3,7 @@
  * Purpose: Generates the authoritative GOV-SUBSTRATES.json manifest during build.
  * Authority: SENTINEL PROTOCOL v1.1.0 (MYA-GOV-008C)
  * Classification: TS-Λ3
+ * Organization: PRP-COMMUNICATIONS-LLC
  */
 
 import fs from 'fs';
@@ -24,13 +25,13 @@ if (!fs.existsSync(DATA_PATH)) {
 const manifest = {
   substrates: {
     clinical: {
-      repo: "Butterdime/MYAUDIT",
+      repo: "PRP-COMMUNICATIONS-LLC/MYAUDIT",
       site_id: "primary",
       firebase_project: "rpr-myaudit",
       region: "asia-southeast1"
     },
     governance: {
-      repo: "Butterdime/RPR-KONTROL-Dashboard",
+      repo: "PRP-COMMUNICATIONS-LLC/RPR-KONTROL-Dashboard",
       site_id: "myaudit-kontrol-dashboard",
       firebase_project: "rpr-myaudit",
       region: "asia-southeast1"
@@ -39,7 +40,7 @@ const manifest = {
   wif_config: {
     pool: "github-actions-pool",
     provider: "github-actions-provider-v2",
-    condition: "attribute.repository==\"butterdime/rpr-kontrol-dashboard\"",
+    condition: "attribute.repository==\"prp-communications-llc/rpr-kontrol-dashboard\"",
     enforced_case: true
   },
   runtime: {

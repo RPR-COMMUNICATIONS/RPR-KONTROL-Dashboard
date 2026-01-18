@@ -2,6 +2,7 @@
 # Guardian Substrate Verification Script
 # Authority: SENTINEL PROTOCOL v1.1.0 / MYA-GOV-008C
 # Purpose: Pre-deployment verification for RPR-KONTROL-Dashboard hosting:kontrol target
+# Organization: PRP-COMMUNICATIONS-LLC
 
 set -e
 
@@ -9,7 +10,7 @@ PROJECT_ID="rpr-myaudit"
 KONTROL_SITE="myaudit-kontrol-dashboard"
 EXPECTED_REGION="asia-southeast1"
 EXPECTED_WIF_PROVIDER="github-actions-provider-v2"
-EXPECTED_REPO="butterdime/rpr-kontrol-dashboard"
+EXPECTED_REPO="prp-communications-llc/rpr-kontrol-dashboard"
 
 echo "🛡️ SENTINEL: Initiating Substrate Verification..."
 echo "------------------------------------------------"
@@ -36,7 +37,7 @@ if [ -f "$MANIFEST_PATH" ]; then
   echo "🔍 Checking GOV-SUBSTRATES.json structure..."
   
   # Verify substrates.clinical
-  if ! grep -q "\"repo\": \"Butterdime/MYAUDIT\"" "$MANIFEST_PATH" || \
+  if ! grep -q "\"repo\": \"PRP-COMMUNICATIONS-LLC/MYAUDIT\"" "$MANIFEST_PATH" || \
      ! grep -q "\"site_id\": \"primary\"" "$MANIFEST_PATH" || \
      ! grep -q "\"firebase_project\": \"$PROJECT_ID\"" "$MANIFEST_PATH" || \
      ! grep -q "\"region\": \"$EXPECTED_REGION\"" "$MANIFEST_PATH"; then
@@ -45,7 +46,7 @@ if [ -f "$MANIFEST_PATH" ]; then
   fi
   
   # Verify substrates.governance
-  if ! grep -q "\"repo\": \"Butterdime/RPR-KONTROL-Dashboard\"" "$MANIFEST_PATH" || \
+  if ! grep -q "\"repo\": \"PRP-COMMUNICATIONS-LLC/RPR-KONTROL-Dashboard\"" "$MANIFEST_PATH" || \
      ! grep -q "\"site_id\": \"$KONTROL_SITE\"" "$MANIFEST_PATH"; then
     echo "❌ ERROR: substrates.governance structure invalid"
     exit 1
@@ -55,6 +56,12 @@ if [ -f "$MANIFEST_PATH" ]; then
   if ! grep -q "\"provider\": \"$EXPECTED_WIF_PROVIDER\"" "$MANIFEST_PATH" || \
      ! grep -q "\"condition\"" "$MANIFEST_PATH"; then
     echo "❌ ERROR: wif_config structure invalid"
+    exit 1
+  fi
+  
+  # Verify WIF condition uses PRP-COMMUNICATIONS-LLC (lowercase)
+  if ! grep -q "prp-communications-llc/rpr-kontrol-dashboard" "$MANIFEST_PATH"; then
+    echo "❌ ERROR: WIF condition does not match PRP-COMMUNICATIONS-LLC organization"
     exit 1
   fi
   
@@ -93,5 +100,5 @@ fi
 echo "✅ No clinical codename leakage detected"
 
 echo "------------------------------------------------"
-echo "🏁 Substrate Verification Complete ✅"
+echo "🏁 PRP SUBSTRATE VERIFICATION COMPLETE ✅"
 exit 0
