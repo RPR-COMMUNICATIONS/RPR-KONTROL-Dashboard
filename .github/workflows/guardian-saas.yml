@@ -29,16 +29,19 @@ jobs:
       - name: "🏗️ Build Kontrol"
         env:
           VITE_FIREBASE_PROJECT_ID: rpr-myaudit
-          # Add any other required VITE_* env vars here
         run: npm run build:kontrol
 
       - name: "🔐 Authenticate via WIF"
+        id: auth
         uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
           service_account: ${{ secrets.GCP_WIF_SERVICE_ACCOUNT }}
+          token_format: 'access_token'   # <<< Token Bridge
 
       - name: "🚀 Firebase Deploy (Direct CLI)"
+        env:
+          FIREBASE_TOKEN: ${{ steps.auth.outputs.access_token }}   # <<< Token Bridge
         run: |
           npx firebase-tools deploy \
             --only hosting:kontrol \
