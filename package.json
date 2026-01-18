@@ -6,23 +6,29 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:kontrol": "BUILD_OUTPUT_DIR=dist-kontrol vite build && echo '{\"provider\": \"github-actions-provider-v2\", \"identity\": \"myaudit-kontrol-ci\", \"timestamp\": \"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'\"}' > dist-kontrol/GOV-SUBSTRATES.json",
+    "build:kontrol": "vite build --outDir dist-kontrol && node scripts/generate-manifest.cjs",
     "preview": "vite preview",
     "deploy:kontrol": "npm run build:kontrol && firebase deploy --only hosting:kontrol"
   },
   "dependencies": {
     "@google/genai": "^1.37.0",
     "firebase": "^12.8.0",
+    "lucide-react": "^0.562.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-markdown": "^10.1.0",
     "recharts": "^3.6.0"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.18",
     "@types/node": "^22.14.0",
     "@vitejs/plugin-react": "^5.0.0",
+    "autoprefixer": "^10.4.23",
     "firebase-admin": "^13.6.0",
     "firebase-tools": "^13.31.1",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.18",
+    "tailwindcss-animate": "^1.0.7",
     "ts-node": "^10.9.2",
     "typescript": "~5.8.2",
     "vite": "^6.2.0"
