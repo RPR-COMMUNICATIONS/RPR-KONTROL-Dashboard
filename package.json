@@ -9,7 +9,7 @@
     "build:kontrol": "vite build --outDir dist-kontrol && node scripts/generate-manifest.cjs",
     "preview": "vite preview",
     "deploy:kontrol": "npm run build:kontrol && firebase deploy --only hosting:kontrol",
-    "cleanup:actions": "sh scripts/delete-actions-runs.sh"
+    "cleanup:actions": "chmod +x scripts/delete-actions-runs.sh && ./scripts/delete-actions-runs.sh"
   },
   "dependencies": {
     "@google/genai": "^1.37.0",
@@ -22,8 +22,11 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.18",
+    "@tailwindcss/vite": "^4.1.18",
     "@types/node": "^22.14.0",
-    "@vitejs/plugin-react": "^5.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.2",
     "autoprefixer": "^10.4.23",
     "firebase-admin": "^13.6.0",
     "firebase-tools": "^13.31.1",
