@@ -1,14 +1,15 @@
 {
   "name": "rpr-kontrol-dashboard",
   "private": true,
-  "version": "1.6.0",
+  "version": "1.6.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "build:kontrol": "vite build --outDir dist-kontrol && node scripts/generate-manifest.cjs",
     "preview": "vite preview",
-    "deploy:kontrol": "npm run build:kontrol && firebase deploy --only hosting:kontrol"
+    "deploy:kontrol": "npm run build:kontrol && firebase deploy --only hosting:kontrol",
+    "cleanup:actions": "sh scripts/delete-actions-runs.sh"
   },
   "dependencies": {
     "@google/genai": "^1.37.0",
