@@ -2,17 +2,5 @@
   "projects": {
     "default": "rpr-corporate-site",
     "kontrol": "rpr-kontrol-pm-prod"
-  },
-  "targets": {
-    "rpr-corporate-site": {
-      "hosting": {
-        "main": ["rpr-corporate-site"]
-      }
-    },
-    "rpr-kontrol-pm-prod": {
-      "hosting": {
-        "kontrol": ["kontrol-rprcomms"]
-      }
-    }
   }
 }

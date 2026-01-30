@@ -1,0 +1,37 @@
+# RPR-KONTROL Sovereign Cursor Environment
+# Authority: RPR COMMUNICATIONS, LLC | Governance: SENTINEL v1.1.0 / RPR-KONTROL v1.0
+
+## 1. Identity & Authority
+- This workspace is **Harbor A (KONTROL)** — sovereign AI-governance substrate.
+- **Sovereign Root:** hello@butterdime.com (mechanical executor, no flattery, no synonyms).
+- **Terminology:** Use "Obligor" and "Sovereign" as defined. No substitutions.
+- Canonical Firebase project: **rpr-kontrol-pm-prod** (Singapore, asia-southeast1).
+- Data residency: **SG** | Verification fence: **AU** (VERIFY).
+
+## 2. Token Efficiency Protocol (Execution Strategy)
+- **Default Workflow:** Ask (clarify) → Plan (validate) → Execute (Agent/Composer).
+- **Plan Mode Priority:** Mandatory for multi-file changes or new features to prevent 50-70% token waste.
+- **Composer/Agent:** Use for speed-critical scaffolding or terminal-heavy debugging once the Plan is validated.
+- **Goal:** Minimize "fix-attempt-fix" loops by catching logic errors in Plan mode first.
+
+## 3. Environment Boundaries & Infrastructure
+- **Production Target:** rpr-kontrol-pm-prod for all production guidance.
+- **Legacy Purge:** Explicitly block usage of legacy US project IDs (myaudit-*).
+- **Secret Handling:** Never log/embed API keys. Use `VITE_` env vars only.
+- **Configuration:** Preserve `VITE_*` as source of truth. No hardcoded Firebase config.
+
+## 4. Governance Audit Pipeline (Generic Logic)
+- **Mathematical Integrity:** Enforce (Total_Ex + Tax = Total_Incl) for all transactional logic.
+- **Job Numbering:** Format: [PREFIX]-[CATEGORY]-[SEQUENCE] (e.g., KONTROL-GEN-001).
+- **Firestore Immutability:** Prohibit changes weakening `governance_sessions` or bypassing owner scope.
+- **Generic Rules:** Apply tax/compliance triggers (Capital Allowance, Small Value Asset) as OS logic.
+
+## 5. Artifacts & Forensic Logging
+- **Paths:** Align with `RPR-KONTROL-DOCUMENTS/{project}/specs/` and `schemas/`.
+- **Classification:** TS-Λ3 Founder-Only Access.
+- **The Sentinel:** Trace all admin actions to `governance.log` with SHA-256 integrity hashing.
+
+## 6. Execution Constraints (Founder-Preserving)
+- **No autonomous decisions on:** Schema changes, dependency additions, or regional policy changes.
+- **Always request approval for:** Strategic architecture changes or new external services.
+- **Immediate execution allowed:** UI bug fixes, styling, and refactoring within existing patterns.

@@ -3,39 +3,14 @@
     {
       "target": "main",
       "public": "dist",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-      "rewrites": [
-        {
-          "source": "**",
-          "destination": "/index.html"
-        }
-      ]
+      "site": "rpr-corporate-site",
+      "rewrites": [{ "source": "**", "destination": "/index.html" }]
     },
     {
       "target": "kontrol",
       "public": "apps/kontrol-dashboard/dist-kontrol",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-      "headers": [
-        {
-          "source": "**",
-          "headers": [
-            {
-              "key": "X-Sovereign-Logic",
-              "value": "ssk3c-locked"
-            },
-            {
-              "key": "Content-Security-Policy",
-              "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://apis.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.gstatic.com; connect-src 'self' https://identitytoolkit.googleapis.com https://firestore.googleapis.com https://securetoken.googleapis.com; frame-src 'self' https://*.firebaseapp.com;"
-            }
-          ]
-        }
-      ],
-      "rewrites": [
-        {
-          "source": "**",
-          "destination": "/index.html"
-        }
-      ]
+      "site": "kontrol-rprcomms",
+      "rewrites": [{ "source": "**", "destination": "/index.html" }]
     }
   ]
 }

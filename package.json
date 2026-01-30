@@ -1,0 +1,13 @@
+{
+  "name": "rpr-kontrol",
+  "version": "1.0.0",
+  "description": "RPR-KONTROL monorepo — Harbor A (Singapore) sovereign AI-governance substrate",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "seed-generic-sovereign": "node scripts/seed-generic-sovereign.mjs"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.6.0"
+  }
+}
